@@ -607,6 +607,9 @@ void JSON::update(const struct sitl_input &input)
     // as the model does not provide mag feild we calculate it from position and attitude
     update_mag_field_bf();
 
+    // Keep simulated peripherals attached to serial ports active with JSON FDM.
+    update_external_payload(input);
+
     // allow for changes in physics step
     // Only adjust frame time if lockstep is enabled (no_lockstep is false)
     if (use_time_sync && !state.no_lockstep) {

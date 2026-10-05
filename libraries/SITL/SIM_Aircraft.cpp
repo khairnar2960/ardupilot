@@ -159,6 +159,11 @@ float Aircraft::hagl() const
     return (-position.z) + home.alt * 0.01f - ground_level - frame_height - ground_height_difference();
 }
 
+float Aircraft::get_height_above_ground() const
+{
+    return hagl();
+}
+
 /*
    return true if we are on the ground
 */
@@ -1468,4 +1473,3 @@ bool SITL::SIM::set_pose(uint8_t instance, const Location &loc, const Quaternion
 {
     return Aircraft::set_pose(instance, loc, quat, velocity_ef, gyro_rads);
 }
-

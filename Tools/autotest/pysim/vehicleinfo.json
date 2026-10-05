@@ -194,6 +194,9 @@
                     "default_params/copter.parm",
                     "default_params/gazebo-iris.parm"
                 ],
+                "sitl_extra_args": [
+                    "--serial5=sim:avt_cm62_gimbal:"
+                ],
                 "external": true
             },
             "airsim-copter": {

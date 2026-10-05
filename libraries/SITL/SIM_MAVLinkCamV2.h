@@ -18,6 +18,7 @@
 #include "SIM_Camera.h"
 #include <GCS_MAVLink/GCS_MAVLink.h>
 #include <AP_Math/AP_Math.h>
+#include <AP_HAL/utility/Socket_native.h>
 
 namespace SITL {
 
@@ -26,6 +27,7 @@ public:
     void handle_message(const mavlink_message_t &msg);
     void update(const class Aircraft &aircraft);
     void set_camera_instance(uint8_t instance);
+    void set_zoom_bridge(const char *address, uint16_t port);
 
 protected:
     Camera _camera;
@@ -51,6 +53,22 @@ protected:
     virtual mavlink_status_t &camera_mav_status() = 0;
 
 private:
+    struct PendingBridgeCommand {
+        bool active {};
+        uint32_t request_id {};
+        MAV_CMD command {};
+        uint8_t target_sysid {};
+        uint8_t target_compid {};
+        uint32_t time_boot_ms {};
+        int32_t image_index {};
+        int32_t lat {};
+        int32_t lon {};
+        int32_t alt_mm {};
+        int32_t relative_alt_mm {};
+        float vehicle_q[4] {1.0f, 0.0f, 0.0f, 0.0f};
+        uint32_t started_ms {};
+    };
+
     void send_camera_heartbeat();
     void send_camera_information(uint32_t target_sysid, uint8_t target_compid);
     void send_camera_settings();
@@ -58,10 +76,28 @@ private:
     bool send_video_stream_information(uint8_t stream_id);
     void send_camera_command_ack(uint32_t target_sysid, uint8_t target_compid,
                                   MAV_CMD cmd, MAV_RESULT result);
+    bool send_capture_to_bridge(uint32_t request_id, int32_t image_index);
+    bool send_video_to_bridge(uint32_t request_id, bool start);
+    void receive_bridge_results();
+    void complete_capture(const char *response, uint32_t request_id);
 
     uint8_t  _camera_compid {MAV_COMP_ID_CAMERA};
     uint32_t _last_camera_heartbeat_ms {};
     uint32_t _recording_started_ms {};
+    uint32_t _next_bridge_request_id {1};
+    SocketAPM_native _zoom_bridge_socket{true};
+    const char *_zoom_bridge_address {};
+    uint16_t _zoom_bridge_port {};
+    bool _zoom_bridge_bound {};
+    PendingBridgeCommand _pending_bridge_command {};
+    int32_t _aircraft_lat {};
+    int32_t _aircraft_lon {};
+    int32_t _aircraft_alt_mm {};
+    int32_t _aircraft_relative_alt_mm {};
+    float _aircraft_q[4] {1.0f, 0.0f, 0.0f, 0.0f};
+    bool _aircraft_state_valid {};
+
+    void send_zoom_to_bridge(float percent);
 };
 
 }  // namespace SITL

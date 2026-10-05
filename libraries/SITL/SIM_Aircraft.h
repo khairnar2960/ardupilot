@@ -154,6 +154,9 @@ public:
     // get position relative to home
     Vector3d get_position_relhome() const;
 
+    // return height above ground level in metres
+    float get_height_above_ground() const;
+
     // get air density in kg/m^3
     float get_air_density(float alt_amsl) const;
 

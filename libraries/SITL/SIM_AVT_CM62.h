@@ -19,6 +19,9 @@ public:
     void set_instance(uint8_t instance) override {
         MAVLinkGimbalv2::set_instance(instance);
         set_camera_instance(instance);
+        if (instance == 0) {
+            set_zoom_bridge("127.0.0.1", 9010);
+        }
     }
 
     void handle_message(const mavlink_message_t &msg) override {
@@ -54,6 +57,7 @@ private:
         // supports a wider range of capabilities we should switch
         // testing to that camera.
         return CAMERA_CAP_FLAGS_CAPTURE_IMAGE |
+               CAMERA_CAP_FLAGS_CAPTURE_VIDEO |
                CAMERA_CAP_FLAGS_HAS_BASIC_ZOOM |   // real CM62: all zoom types except ZOOM_TYPE_FOCAL_LENGTH; simulator: ZOOM_TYPE_RANGE only
                CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS;   // real CM62: no MAV_CMD_SET_CAMERA_FOCUS support; simulator: FOCUS_TYPE_RANGE only
     }

@@ -16,7 +16,7 @@ namespace SITL {
 class Camera {
 public:
     void     trigger_shutter() { _shot_count++; }
-    uint16_t shot_count() const { return _shot_count; }
+    uint32_t shot_count() const { return _shot_count; }
 
     void  set_zoom_pct(float pct)  { _zoom_pct = pct; }
     float zoom_pct()   const       { return _zoom_pct; }
@@ -31,7 +31,7 @@ public:
     bool recording() const { return _recording; }
 
 private:
-    uint16_t _shot_count {};
+    uint32_t _shot_count {};
     float    _zoom_pct   {NAN};
     float    _focus_pct  {NAN};
     uint8_t  _mode {};

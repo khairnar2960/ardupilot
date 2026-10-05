@@ -983,6 +983,7 @@ def start_vehicle(binary, opts, stuff, spawns=None):
     if opts.wipe_eeprom:
         cmd.append("-w")
     cmd.extend(["--model", stuff["model"]])
+    cmd.extend(stuff.get("sitl_extra_args", []))
     cmd.extend(["--speedup", str(opts.speedup)])
     if opts.sysid is not None:
         cmd.extend(["--sysid", str(opts.sysid)])
